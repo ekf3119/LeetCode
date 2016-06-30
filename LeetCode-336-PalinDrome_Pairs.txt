@@ -1,0 +1,74 @@
+class Solution {
+private:
+    bool isPalin(string word) {
+        int s = 0, e = word.size()-1;
+        while (s<e) {
+            if (word[s] != word[e]) return false;
+            else {
+                s++;
+                e--;
+            }
+        }
+        return true;
+    }
+
+public:
+    vector<vector<int>> palindromePairs(vector<string>& words) {
+        unordered_map<string, int> dict;
+        vector<vector<int>> result;
+        for (int i = 0; i < words.size(); i++) {
+            dict[words[i]] = i;
+        }
+        for (int i = 0; i < words.size(); i++) {
+            if (words[i] == "") continue;
+            
+            if (isPalin(words[i])) {
+                if (dict.find("")!=dict.end()) {
+                    vector<int> sol;
+                    sol.push_back(i);
+                    sol.push_back(dict[""]);
+                    result.push_back(sol);
+                    reverse(sol.begin(), sol.end());
+                    result.push_back(sol);
+                }
+            }
+            else {
+                string rvs = words[i];
+                reverse(rvs.begin(), rvs.end());
+                if (dict.find(rvs) != dict.end()) {
+                    vector<int> sol;
+                    sol.push_back(i);
+                    sol.push_back(dict[rvs]);
+                    result.push_back(sol);
+                }
+            }
+            
+            for (int j = 1; j < words[i].size(); j ++) {
+                string left = words[i].substr(0, j);
+                string right = words[i].substr(j);
+                if (isPalin(left)) {
+                    string rvsr = right;
+                    reverse(rvsr.begin(), rvsr.end());
+                    if (dict.find(rvsr)!=dict.end()) {
+                        vector<int> sol;
+                        sol.push_back(dict[rvsr]);
+                        sol.push_back(i);
+                        result.push_back(sol);
+                    }
+                }
+                if (isPalin(right)) {
+                    string rvsl = left;
+                    reverse(rvsl.begin(), rvsl.end());
+                    if (dict.find(rvsl)!=dict.end()) {
+                        vector<int> sol;
+                        sol.push_back(i);
+                        sol.push_back(dict[rvsl]);
+                        result.push_back(sol);
+                    }
+                }
+            }
+            
+        }
+        return result;
+    }
+};

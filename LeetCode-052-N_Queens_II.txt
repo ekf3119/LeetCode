@@ -1,0 +1,45 @@
+class Solution {
+private:
+    bool validSpot(int row, int col, int n, vector<int> sol) {
+        int i = 1;
+        while (i <= row) {
+            if (sol[row-i] == col) return false;
+            if (col-i >= 0) {
+                if (sol[row-i] == col-i) return false;
+            }
+            if (col+i < n) {
+                if (sol[row-i] == col+i) return false;
+            }
+            
+            i++;
+        }
+        return true;
+    }
+    
+    void addAll(vector<int> &sol, int n, vector<vector<int>> &result) {
+        if (sol.size() == n) {
+            result.push_back(sol);
+            return;
+        }
+        else {
+            int row = sol.size();
+            for (int col = 0; col < n; col++) {
+                if (validSpot(row, col, n, sol)){
+                    sol.push_back(col);
+                    addAll(sol, n, result);
+                    sol.pop_back();
+                }
+            }
+        
+        }
+    }
+public:
+    int totalNQueens(int n) {
+        if (n == 0 || n == 2 || n == 3) return 0;
+        if (n == 1) return 1;
+        vector<int> sol;
+        vector<vector<int>> result;
+        addAll(sol, n, result);
+        return result.size();
+    }
+};

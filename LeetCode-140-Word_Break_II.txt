@@ -1,0 +1,44 @@
+class Solution {
+private:
+
+    int longestWord(unordered_set<string> wordDict) {
+        int longest = 0;
+        unordered_set<string>::iterator it = wordDict.begin();
+        while (it != wordDict.end()) {
+            string ref = (*it);
+            longest = longest< ref.length()?ref.length():longest;
+            it++;
+        }
+        return longest;
+    }
+    
+    void addWord(string s, int pos, int len, unordered_set<string> wordDict, vector<bool> &possible, string &sol, vector<string> &result) {
+        if (pos == len) {
+            result.push_back(sol.substr(0, sol.size()-1));
+            return;
+        }
+        
+        for (int i = pos; i < len; i++) {
+            string check = s.substr(pos, i-pos+1);
+            if (wordDict.find(check) != wordDict.end() && possible[i+1]) {
+                int solsize = sol.size();
+                sol.append(check);
+                sol.push_back(' ');
+                int before = result.size();
+                addWord(s, i+1, len, wordDict, possible, sol, result);
+                if (result.size() == before) possible[i+1] = false;
+                sol.resize(solsize);
+            }
+        }
+    }
+public:
+    vector<string> wordBreak(string s, unordered_set<string>& wordDict) {
+        vector<string> result;
+        if (s.size() == 0 || wordDict.size() == 0) return result;
+        int bound = longestWord(wordDict);
+        string solve; 
+        vector<bool> possible(s.size()+1, true);
+        addWord(s, 0, s.size(), wordDict, possible, solve, result);
+        return result;
+    }
+};

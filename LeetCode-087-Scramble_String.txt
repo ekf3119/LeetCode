@@ -1,0 +1,37 @@
+class Solution {
+private:
+    bool isValid(string v1, string v2) {
+        
+        sort(v1.begin(), v1.end());
+        
+        sort(v2.begin(), v2.end());
+        if (v1 != v2 ) return false;
+        else return true;
+    }
+public:
+    bool isScramble(string s1, string s2) {
+        if (s1.length() != s2.length()) {
+            return false;
+        }
+        
+        if (s2.size() == 0 || s1 == s2) return true;
+        
+        if (!isValid(s1, s2)) return false;
+        
+        for (int i = 1; i < s2.size(); i++) {
+            int len = s2.size();
+            string str11 = s1.substr(0, i);
+            string str12 = s1.substr(i, s2.size()-i);
+            
+            string str21 = s2.substr(0, i);
+            string str22 = s2.substr(i, s2.size()-i);
+            
+            string rvs21 = s2.substr(len-i, i);
+            string rvs22 = s2.substr(0, len-i);
+            
+            if (isScramble(str11, str21) && isScramble(str12, str22)) return true;
+            if (isScramble(str11, rvs21) && isScramble(str12, rvs22)) return true;
+        }
+        return false;
+    }
+};

@@ -1,0 +1,61 @@
+class Solution {
+public:
+    struct SegTreeNode {
+        int start, end, count;
+        SegTreeNode *left, *right;
+        SegTreeNode(int s, int e): start(s), end(e), count(0), left(NULL), right(NULL) {}
+    };
+    vector<int> countSmaller(vector<int>& nums) {
+        root = build(-1000, 10000);
+        vector<int> result;
+        int low = 0x7FFFFFFF;
+        for (int i = nums.size()-1; i >= 0; i--) {
+            low = min(low, nums[i]-1);
+            result.insert(result.begin(), query(low, nums[i]-1, root));
+            modify(nums[i], root);
+        }
+        return result;
+    }
+
+private:
+    SegTreeNode *root;
+    
+    SegTreeNode *build(int begin, int final) {
+        SegTreeNode *curr = new SegTreeNode(begin, final);
+        if (begin != final) {
+            int mid = begin + (final-begin)/2;
+            curr->left = build(begin, mid);
+            curr->right = build(mid+1, final);
+        }
+        return curr;
+    }
+    
+    void modify(int index, SegTreeNode *node) {
+        if (node->start == index && node->end == index) {
+            node->count += 1;
+            return;
+        }
+        if (index <= node->left->end) {
+            modify(index, node->left);
+        }
+        if (index >= node->right->start) {
+            modify(index, node->right);
+        }
+        node->count =  node->left->count + node->right->count;
+    }
+    
+    int query(int begin, int final, SegTreeNode *node) {
+        if (node->start == begin && node->end == final) {
+            return node->count;
+        }
+        else if (final <= node->left->end) {
+            return query(begin, final, node->left);
+        }
+        else if (begin >= node->right->start) {
+            return query(begin, final, node->right);
+        }
+        else {
+            return query(begin, node->left->end, node->left)+query(node->right->start, final, node->right);
+        }
+    }
+};

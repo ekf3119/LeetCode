@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int firstMissingPositive(vector<int>& nums) {
+        int result = 1;
+        set<int> pool;
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] < 1) continue;
+            else {
+                if (nums[i] == result) {
+                    result++;
+                    while (pool.find(result) != pool.end()) {
+                        pool.erase(result);
+                        result++;
+                    }
+                }
+                else if (nums[i] < result) continue;
+                else {
+                    pool.insert(nums[i]);
+                }
+            }
+        }
+        return result;
+    }
+};
